@@ -13,7 +13,7 @@
         position: relative;
         overflow: hidden;
         width: 100%;
-        padding-top: 100vh; 
+        padding-top: 100vh;
       }
       .responsive-iframe {
         position: absolute;
@@ -25,11 +25,28 @@
         height: 100%;
       }
     </style>
+    <script>
+      window.onload = function () {
+        const iframeWin = document.getElementById("grs-iframe").contentWindow;
+        const message = "secredID";
+
+        const button = document.getElementById("btn");
+
+        button.addEventListener("click", () => {
+          iframeWin.postMessage(
+            message,
+            "https://development.globalrockstar.com"
+          );
+        });
+      };
+    </script>
   </head>
 
   <body>
+    <button id="btn">Send message</button>
     <div class="container">
       <iframe
+        id="grs-iframe"
         frameborder="0"
         class="responsive-iframe"
         src="https://development.globalrockstar.com"
