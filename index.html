@@ -33,22 +33,36 @@
     </style>
     <script>
       window.onload = function () {
-        const form = document.getElementById('form1');
-        form.addEventListener('submit', (event)=>{
+        const iframeWin = document.getElementById("grs-iframe").contentWindow;
+        const form = document.getElementById("form1");
+        const firstName = document.getElementById("exampleInputName1");
+        const lastName = document.getElementById("exampleInputName2");
+        const email = document.getElementById("exampleInputEmail1");
+
+        const keyPair = CryptoJS.HmacSHA256("secret");
+        const privateKey = keyPair.toString();
+        const publicKey = CryptoJS.enc.Base64.stringify(keyPair);
+        console.log("PUBLIC KEY: ", publicKey);
+
+        form.addEventListener("submit", (event) => {
           event.preventDefault();
-          console.log(event, form)
-        })
-        // const iframeWin = document.getElementById("grs-iframe").contentWindow;
-        // const message = "secredID";
+          const payload = {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            email: email.value,
+          };
 
-        // const button = document.getElementById("btn");
+          const stringPayload = JSON.stringify(payload);
+          const signature = CryptoJS.HmacSHA256(
+            stringPayload,
+            privateKey
+          ).toString();
 
-        // button.addEventListener("click", () => {
-        //   iframeWin.postMessage(
-        //     message,
-        //     "https://development.globalrockstar.com"
-        //   );
-        // });
+          iframeWin.postMessage(
+            { payload: stringPayload, signature },
+            "https://development.globalrockstar.com"
+          );
+        });
       };
     </script>
     <script
@@ -72,19 +86,11 @@
       </div>
       <div class="mb-3">
         <label for="exampleInputName1" class="form-label">Name1</label>
-        <input
-          type="text"
-          class="form-control"
-          id="exampleInputName1"
-        />
+        <input type="text" class="form-control" id="exampleInputName1" />
       </div>
       <div class="mb-3">
         <label for="exampleInputName2" class="form-label">Name2</label>
-        <input
-          type="text"
-          class="form-control"
-          id="exampleInputName2"
-        />
+        <input type="text" class="form-control" id="exampleInputName2" />
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
